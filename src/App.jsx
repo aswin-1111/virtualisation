@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+
 export default function KnapsackInput() {
   const [capacity, setCapacity] = useState("");
   const [items, setItems] = useState([]);
@@ -14,19 +15,24 @@ export default function KnapsackInput() {
     setItems(updatedItems);
   };
 
+  const handleDeleteItem = (index) => {
+    const updatedItems = items.filter((_, i) => i !== index);
+    setItems(updatedItems);
+  };
+
   return (
     <div className="container">
       <h1 className="title">Knapsack Problem Setup</h1>
 
       {/* Knapsack Capacity */}
       <div className="section">
-        <label className="label">Knapsack Capacity</label>
+        <h2 className="label">Knapsack Capacity</h2>
         <input
           type="number"
           min="1"
           value={capacity}
           onChange={(e) => setCapacity(e.target.value)}
-          className="input"
+          className="knapsackcapacity"
           placeholder="Enter capacity"
         />
       </div>
@@ -62,6 +68,12 @@ export default function KnapsackInput() {
                   placeholder="Weight"
                   className="input"
                 />
+                <button
+                  onClick={() => handleDeleteItem(index)}
+                  className="delete"
+                >
+                  Delete Item
+                </button>
               </div>
             </li>
           ))}
