@@ -3,7 +3,11 @@ import "./App.css";
 
 export default function KnapsackInput() {
   const [capacity, setCapacity] = useState("");
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([
+    { name: "A", value: 6, weight: 2 },
+    { name: "B", value: 10, weight: 4 },
+    { name: "C", value: 12, weight: 6 },
+  ]);
 
   const handleAddItem = () => {
     setItems([...items, { name: "", value: "", weight: "" }]);
@@ -22,7 +26,7 @@ export default function KnapsackInput() {
 
   return (
     <div className="container">
-      <h1 className="title">Knapsack Problem Setup</h1>
+      <h1 className="title">Knapsack Problem</h1>
 
       {/* Knapsack Capacity */}
       <div className="section">
@@ -72,7 +76,7 @@ export default function KnapsackInput() {
                   onClick={() => handleDeleteItem(index)}
                   className="delete"
                 >
-                  Delete Item
+                  Delete
                 </button>
               </div>
             </li>

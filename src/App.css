@@ -47,6 +47,8 @@ html, body {
   border-radius: 8px;
   background-color: #2c2c3e;
   color: #ffffff;
+  font-size: 16px;
+
 }
 
 .delete {
@@ -56,6 +58,7 @@ html, body {
   border-radius: 8px;
   background-color: #2c2c3e;
   color: #ffffff;
+  font-size: 14px;
 }
 .knapsackcapacity {
   max-width: 200px;
