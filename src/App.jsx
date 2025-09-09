@@ -9,14 +9,14 @@ export default function KnapsackInput() {
     { name: "C", value: 12, weight: 6 },
   ]);
 
-  const [dp, setDp] = useState([]); 
+  const [dp, setDp] = useState([]);
   const [dpHistory, setDpHistory] = useState([]);
-  const [fillStep, setFillStep] = useState(0); 
+  const [fillStep, setFillStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0);
   const [dpComplete, setDpComplete] = useState(false);
 
-  const [backtrackSequence, setBacktrackSequence] = useState([]); 
-  const [backtrackIndex, setBacktrackIndex] = useState(0); 
+  const [backtrackSequence, setBacktrackSequence] = useState([]);
+  const [backtrackIndex, setBacktrackIndex] = useState(0);
   const [chosenItemsSet, setChosenItemsSet] = useState(new Set());
 
   const parsedItems = useMemo(() => {
@@ -51,8 +51,8 @@ export default function KnapsackInput() {
 
   const stepToCoords = (stepIndex) => {
     if (stepIndex < 0) return null;
-    const row = Math.floor(stepIndex / (W + 1)) + 1; 
-    const col = stepIndex % (W + 1); 
+    const row = Math.floor(stepIndex / (W + 1)) + 1;
+    const col = stepIndex % (W + 1);
     return { i: row, w: col };
   };
 
@@ -72,7 +72,7 @@ export default function KnapsackInput() {
       newDp[i][w] = Math.max(without, withItem);
     }
 
-    const newHistory = dpHistory.slice(0, fillStep + 1); 
+    const newHistory = dpHistory.slice(0, fillStep + 1);
     newHistory.push(cloneDp(newDp));
 
     setDp(newDp);
@@ -96,7 +96,7 @@ export default function KnapsackInput() {
 
   const startBacktrack = () => {
     if (!dpComplete) return;
-    const snapshot = dp; 
+    const snapshot = dp;
     let i = n;
     let w = W;
     const seq = [];
@@ -144,35 +144,14 @@ export default function KnapsackInput() {
     setBacktrackIndex(prevIndex);
   };
 
-  const handleAddItem = () => setItems((s) => [...s, { name: "", value: "", weight: "" }]);
-  const handleDeleteItem = (index) => setItems((s) => s.filter((_, i) => i !== index));
+  const handleAddItem = () =>
+    setItems((s) => [...s, { name: "", value: "", weight: "" }]);
+  const handleDeleteItem = (index) =>
+    setItems((s) => s.filter((_, i) => i !== index));
   const handleItemChange = (index, field, value) => {
     const copy = items.slice();
     copy[index] = { ...copy[index], [field]: value };
     setItems(copy);
-  };
-
-  const styles = {
-    table: {
-      borderCollapse: "collapse",
-      marginTop: 12,
-      overflowX: "auto",
-    },
-    cell: {
-      border: "1px solid #444",
-      padding: "6px 8px",
-      minWidth: 48,
-      textAlign: "center",
-      backgroundColor: "#fff",
-      color: "#000",
-    },
-    headerCell: {
-      border: "1px solid #555",
-      padding: "6px 8px",
-      backgroundColor: "#2b2b3d",
-      color: "#fff",
-      fontWeight: 700,
-    },
   };
 
   const currentFillCoords = fillStep < totalSteps ? stepToCoords(fillStep) : null;
@@ -237,9 +216,9 @@ export default function KnapsackInput() {
       </div>
 
       <div className="section">
-        <h2 className="subtitle">DP Table (step-by-step)</h2>
+        <h2 className="subtitle">DP Table</h2>
 
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        <div className="controls">
           <button onClick={initializeDP} className="button">
             Initialize DP
           </button>
@@ -250,7 +229,7 @@ export default function KnapsackInput() {
             Next Fill ▶
           </button>
 
-          <div style={{ marginLeft: 12 }}>
+          <div className="step-counter">
             Step: {fillStep} / {totalSteps}
           </div>
 
@@ -263,32 +242,36 @@ export default function KnapsackInput() {
               startBacktrack();
             }}
             className="button"
-            style={{ marginLeft: 12 }}
             disabled={!dpComplete}
           >
             Start Backtrack
           </button>
 
           <button onClick={backtrackPrev} className="button" disabled={backtrackIndex <= 0}>
-            ◀ Prev BT
+            ◀ Prev
           </button>
-          <button onClick={backtrackNext} className="button" disabled={!dpComplete || backtrackIndex >= backtrackSequence.length}>
-            Next BT ▶
+          <button
+            onClick={backtrackNext}
+            className="button"
+            disabled={!dpComplete || backtrackIndex >= backtrackSequence.length}
+          >
+            Next ▶
           </button>
 
-          <div style={{ marginLeft: 12 }}>
-            Backtrack: {Math.min(backtrackIndex, backtrackSequence.length)} / {backtrackSequence.length}
+          <div className="step-counter">
+            Backtrack: {Math.min(backtrackIndex, backtrackSequence.length)} /{" "}
+            {backtrackSequence.length}
           </div>
         </div>
 
-        {/* DP table rendering */}
-        <div style={{ overflowX: "auto", marginTop: 12 }}>
-          <table style={styles.table}>
+        {/* DP table */}
+        <div className="table-container">
+          <table className="dp-table">
             <thead>
               <tr>
-                <th style={styles.headerCell}>i\w</th>
+                <th className="header-cell">i\w</th>
                 {Array.from({ length: W + 1 }, (_, w) => (
-                  <th key={w} style={styles.headerCell}>
+                  <th key={w} className="header-cell">
                     {w}
                   </th>
                 ))}
@@ -297,22 +280,19 @@ export default function KnapsackInput() {
             <tbody>
               {Array.from({ length: n + 1 }, (_, i) => (
                 <tr key={i}>
-                  <td style={{ ...styles.headerCell, textAlign: "left" }}>{i === 0 ? "0 (no items)" : `${i} (${parsedItems[i - 1].name || "#"})`}</td>
+                  <td className="header-cell left-label">
+                    {i === 0 ? "0 (no items)" : `${i} (${parsedItems[i - 1].name || "#"})`}
+                  </td>
                   {Array.from({ length: W + 1 }, (_, w) => {
                     const value = dp?.[i]?.[w] ?? 0;
 
-                    // Determine styles for highlights
-                    let bg = styles.cell.backgroundColor;
-                    let color = styles.cell.color;
-                    let fontWeight = 400;
-
+                    let className = "cell";
                     if (currentFillCoords && currentFillCoords.i === i && currentFillCoords.w === w) {
-                      bg = "#ffd966"; // yellow
+                      className += " current-fill";
                     }
 
-                    const filledUntil = Math.floor((fillStep - 1) / (W + 1)) + 1;
                     const isFilled = (() => {
-                      if (fillStep === 0) return i === 0 && w === 0; 
+                      if (fillStep === 0) return i === 0 && w === 0;
                       const maxFilledRow = Math.floor((fillStep - 1) / (W + 1)) + 1;
                       if (i < maxFilledRow) return true;
                       if (i === maxFilledRow) {
@@ -322,25 +302,18 @@ export default function KnapsackInput() {
                       return i === 0;
                     })();
 
-                    if (isFilled) {
-                      bg = "#e6fff2";
-                    }
+                    if (isFilled) className += " filled";
 
                     if (currentBacktrackCoords && currentBacktrackCoords.i === i && currentBacktrackCoords.w === w) {
-                      bg = currentBacktrackCoords.chosen ? "#9be7ff" : "#ff9e9e";
-                      fontWeight = 700;
+                      className += currentBacktrackCoords.chosen ? " chosen" : " skipped";
                     }
 
                     if (chosenItemsSet.has(i - 1) && i > 0) {
-                      bg = "#d7f3d7";
-                      fontWeight = 700;
+                      className += " selected";
                     }
 
                     return (
-                      <td
-                        key={w}
-                        style={{ ...styles.cell, backgroundColor: bg, color, fontWeight }}
-                      >
+                      <td key={w} className={className}>
                         {value}
                       </td>
                     );
@@ -350,24 +323,7 @@ export default function KnapsackInput() {
             </tbody>
           </table>
         </div>
-
-        <div style={{ marginTop: 12 }}>
-          <strong>Selected items so far (during backtrack):</strong>
-          {chosenItemsSet.size === 0 ? (
-            <span style={{ marginLeft: 8, color: "#aaa" }}>none</span>
-          ) : (
-            <span style={{ marginLeft: 8 }}>{Array.from(chosenItemsSet).map((idx) => parsedItems[idx].name || `#${idx}`).join(", ")}</span>
-          )}
-        </div>
-
-        <div style={{ marginTop: 8 }}>
-          <strong>Final optimal value (if filled):</strong>
-          <span style={{ marginLeft: 8 }}>{dpComplete ? dp[n][W] : "(complete the fill to know)"}</span>
-        </div>
-
       </div>
-
-      <div style={{ height: 80 }} />
     </div>
   );
 }
