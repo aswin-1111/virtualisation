@@ -10,17 +10,15 @@ export default function KnapsackInput() {
   ]);
 
   const [dp, setDp] = useState([]); 
-  const [dpHistory, setDpHistory] = useState([]); // snapshots for undo
-  const [fillStep, setFillStep] = useState(0); // how many cells have been filled
+  const [dpHistory, setDpHistory] = useState([]);
+  const [fillStep, setFillStep] = useState(0); 
   const [totalSteps, setTotalSteps] = useState(0);
   const [dpComplete, setDpComplete] = useState(false);
 
-  // Backtracking state
-  const [backtrackSequence, setBacktrackSequence] = useState([]); // precomputed sequence of actions
-  const [backtrackIndex, setBacktrackIndex] = useState(0); // how many backtrack steps done
+  const [backtrackSequence, setBacktrackSequence] = useState([]); 
+  const [backtrackIndex, setBacktrackIndex] = useState(0); 
   const [chosenItemsSet, setChosenItemsSet] = useState(new Set());
 
-  // Derived values (parsed & sanitized)
   const parsedItems = useMemo(() => {
     return items.map((it) => ({
       name: it.name || "",
@@ -32,10 +30,8 @@ export default function KnapsackInput() {
   const n = parsedItems.length;
   const W = Math.max(0, Number(capacity) || 0);
 
-  // Utility to deep clone a dp array
   const cloneDp = (arr) => arr.map((r) => r.slice());
 
-  // Initialize DP matrix and control variables
   const initializeDP = () => {
     const zero = Array.from({ length: W + 1 }, () => 0);
     const initial = Array.from({ length: n + 1 }, () => zero.slice());
@@ -49,24 +45,20 @@ export default function KnapsackInput() {
     setChosenItemsSet(new Set());
   };
 
-  // Call initialize on first render and when n or W changes
   useEffect(() => {
     initializeDP();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [n, W]);
 
-  // Compute coordinates for a given fillStep (0-based)
   const stepToCoords = (stepIndex) => {
     if (stepIndex < 0) return null;
-    const row = Math.floor(stepIndex / (W + 1)) + 1; // i (1..n)
-    const col = stepIndex % (W + 1); // w (0..W)
+    const row = Math.floor(stepIndex / (W + 1)) + 1; 
+    const col = stepIndex % (W + 1); 
     return { i: row, w: col };
   };
 
-  // Perform a single DP fill step
   const nextFillStep = () => {
     if (fillStep >= totalSteps) return;
-    const stepIndex = fillStep; // current cell to compute
+    const stepIndex = fillStep;
     const { i, w } = stepToCoords(stepIndex);
 
     const item = parsedItems[i - 1];
@@ -80,7 +72,7 @@ export default function KnapsackInput() {
       newDp[i][w] = Math.max(without, withItem);
     }
 
-    const newHistory = dpHistory.slice(0, fillStep + 1); // in case user had undone some steps
+    const newHistory = dpHistory.slice(0, fillStep + 1); 
     newHistory.push(cloneDp(newDp));
 
     setDp(newDp);
@@ -92,7 +84,6 @@ export default function KnapsackInput() {
     }
   };
 
-  // Revert one fill step
   const prevFillStep = () => {
     if (fillStep <= 0) return;
     const newIndex = fillStep - 1;
@@ -103,10 +94,9 @@ export default function KnapsackInput() {
     setDpComplete(false);
   };
 
-  // Build the backtracking sequence from completed DP
   const startBacktrack = () => {
     if (!dpComplete) return;
-    const snapshot = dp; // current dp (completed)
+    const snapshot = dp; 
     let i = n;
     let w = W;
     const seq = [];
@@ -116,11 +106,9 @@ export default function KnapsackInput() {
       const val = snapshot[i][w];
       const valWithout = snapshot[i - 1][w];
       if (val === valWithout) {
-        // item i was not chosen
         seq.push({ i, w, chosen: false, itemIndex: i - 1 });
         i = i - 1;
       } else {
-        // item i chosen
         seq.push({ i, w, chosen: true, itemIndex: i - 1 });
         chosen.add(i - 1);
         w = w - parsedItems[i - 1].weight;
@@ -128,7 +116,6 @@ export default function KnapsackInput() {
       }
     }
 
-    // seq is in order from i=n down to i=1; stepping through seq[0], seq[1], ... simulates the backtracking
     setBacktrackSequence(seq);
     setBacktrackIndex(0);
     setChosenItemsSet(new Set());
@@ -157,7 +144,6 @@ export default function KnapsackInput() {
     setBacktrackIndex(prevIndex);
   };
 
-  // UI helpers for item manipulation
   const handleAddItem = () => setItems((s) => [...s, { name: "", value: "", weight: "" }]);
   const handleDeleteItem = (index) => setItems((s) => s.filter((_, i) => i !== index));
   const handleItemChange = (index, field, value) => {
@@ -166,7 +152,6 @@ export default function KnapsackInput() {
     setItems(copy);
   };
 
-  // Some small inline styles for the DP table
   const styles = {
     table: {
       borderCollapse: "collapse",
@@ -190,7 +175,6 @@ export default function KnapsackInput() {
     },
   };
 
-  // Highlighting helpers
   const currentFillCoords = fillStep < totalSteps ? stepToCoords(fillStep) : null;
   const currentBacktrackCoords = backtrackSequence[backtrackIndex] || null;
 
@@ -322,37 +306,33 @@ export default function KnapsackInput() {
                     let color = styles.cell.color;
                     let fontWeight = 400;
 
-                    // Highlight current fill cell
                     if (currentFillCoords && currentFillCoords.i === i && currentFillCoords.w === w) {
                       bg = "#ffd966"; // yellow
                     }
 
-                    // If cell is already filled (i row <= filled rows) we make it slightly greenish
                     const filledUntil = Math.floor((fillStep - 1) / (W + 1)) + 1;
                     const isFilled = (() => {
-                      if (fillStep === 0) return i === 0 && w === 0; // only base
-                      const maxFilledRow = Math.floor((fillStep - 1) / (W + 1)) + 1; // last row index that has some cells filled
+                      if (fillStep === 0) return i === 0 && w === 0; 
+                      const maxFilledRow = Math.floor((fillStep - 1) / (W + 1)) + 1;
                       if (i < maxFilledRow) return true;
                       if (i === maxFilledRow) {
                         const lastCol = (fillStep - 1) % (W + 1);
                         return w <= lastCol;
                       }
-                      return i === 0; // row 0 is always filled
+                      return i === 0;
                     })();
 
                     if (isFilled) {
-                      bg = "#e6fff2"; // light green
+                      bg = "#e6fff2";
                     }
 
-                    // Highlight backtrack current cell
                     if (currentBacktrackCoords && currentBacktrackCoords.i === i && currentBacktrackCoords.w === w) {
-                      bg = currentBacktrackCoords.chosen ? "#9be7ff" : "#ff9e9e"; // blue if chosen, red if skipped
+                      bg = currentBacktrackCoords.chosen ? "#9be7ff" : "#ff9e9e";
                       fontWeight = 700;
                     }
 
-                    // If the item corresponding to this row is chosen, highlight its row label later; here we style cells lightly
                     if (chosenItemsSet.has(i - 1) && i > 0) {
-                      bg = "#d7f3d7"; // pale green
+                      bg = "#d7f3d7";
                       fontWeight = 700;
                     }
 
