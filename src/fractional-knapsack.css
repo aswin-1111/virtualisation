@@ -2,15 +2,15 @@
   --primary-color: #0f0f0f;
   --secondary-color: #161616;
   --tertiary-color: #2d2d2d;
-  --button-color:  #e4d03c;
-  --button-text-color:  #0f0f0f;
+  --button-color: #e4d03c;
+  --button-text-color: #0f0f0f;
   --text-color: #dfdfdf;
-  
 }
 
-html, body {
-  height: 100%;    
-  margin: 0;      
+html,
+body {
+  height: 100%;
+  margin: 0;
 }
 
 .container {
@@ -30,7 +30,6 @@ html, body {
   margin-bottom: 16px;
   color: var(--text-color);
   text-align: center;
-  
 }
 
 .subtitle {
@@ -51,7 +50,6 @@ html, body {
   background-color: var(--tertiary-color);
   color: var(--text-color);
   font-size: 16px;
-
 }
 
 .delete {
@@ -85,7 +83,7 @@ html, body {
 .item {
   padding: 16px;
   border-radius: 8px;
-  background-color:var(--secondary-color);
+  background-color: var(--secondary-color);
   border: 1px solid #444;
   margin-bottom: 12px;
 }
@@ -144,26 +142,26 @@ html, body {
 }
 
 .current-fill {
-  background-color: #ffd966 ;
+  background-color: #ffd966;
 }
 
 .filled {
-  background-color: #dee8ff ;
+  background-color: #dee8ff;
 }
 
 .chosen {
-  background-color: #9be7ff ;
-  font-weight: 700 ;
+  background-color: #9be7ff;
+  font-weight: 700;
 }
 
 .skipped {
-  background-color: #ff9e9e ;
-  font-weight: 700 ;
+  background-color: #ff9e9e;
+  font-weight: 700;
 }
 
 .selected {
-  background-color: #d7f3d7 ;
-  font-weight: 700 ;
+  background-color: #d7f3d7;
+  font-weight: 700;
 }
 
 .table-container {
