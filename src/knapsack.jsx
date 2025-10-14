@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import "./App.css";
+import "./knapsack.css";
 
 export default function KnapsackInput() {
   const [capacity, setCapacity] = useState(10);
